@@ -15,7 +15,7 @@
 
                 <div class="mt-4">
                     <h1 class="text-3xl">
-                        <a href="/post/{{ $post->slug }}">
+                        <a href="/posts/{{ $post->slug }}">
                             {{ $post->title }}
                         </a>
                     </h1>
@@ -26,21 +26,22 @@
                 </div>
             </header>
 
-            <div class="text-sm mt-4">
-                <p>{{ $post->excerpt }}</p>
+            <div class="text-sm mt-4 space-y-4">
+                <p>{!! $post->excerpt !!}</p>
             </div>
 
             <footer class="flex justify-between items-center mt-8">
                 <div class="flex items-center text-sm">
                     <img src="/images/lary-avatar.svg" alt="Lary avatar">
                     <div class="ml-3">
-                        <h5 class="font-bold">{{ $post->author->name }}</h5>
-                        <h6>Mascot at Laracasts</h6>
+                        <a href="/?author={{ $post->author->username }}">
+                            <h5 class="font-bold">{{ $post->author->name }}</h5>
+                        </a>
                     </div>
                 </div>
 
                 <div>
-                    <a href="/post/{{ $post->slug }}"
+                    <a href="/posts/{{ $post->slug }}"
                        class="transition-colors duration-300 text-xs font-semibold bg-gray-200 hover:bg-gray-300 rounded-full py-2 px-8"
                     >Read More</a>
                 </div>
