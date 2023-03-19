@@ -4,11 +4,21 @@
 <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 
 <style>
-    html{
+    html {
         scroll-behavior: smooth;
+    }
+
+    .clamp {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .clamp.one-line {
+        -webkit-line-clamp: 1;
     }
 </style>
 
@@ -21,26 +31,35 @@
             </a>
         </div>
 
-        <div class="mt-8 md:mt-0">
+        <div class="mt-8 md:mt-0 flex items-center">
             @auth
-                <span class="text-xs font-bold uppercase">Welcome, {{ auth()->user()->name }}</span>
+                <x-dropdown>
+                    <x-slot name="trigger">
+                        <button class="text-xs font-bold uppercase">Welcome, {{ auth()->user()->name }}!</button>
+                    </x-slot>
 
-                <form method="POST" action="/logout" class="text-xs font-semibold text-blue-500 ml-6">
-                    @csrf
+                    @admin
+                        <x-dropdown-item href="/admin/posts" :active="request()->is('admin/posts')">Dashboard</x-dropdown-item>
+                        <x-dropdown-item href="/admin/posts/create" :active="request()->is('admin/posts/create')">New Post</x-dropdown-item>
+                    @endadmin
+                    <x-dropdown-item href="#" x-data="{}" @click.prevent="document.querySelector('#logout-form').submit()">Log Out</x-dropdown-item>
 
-                    <button type="submit">Log Out</button>
-                </form>
+                    <form id="logout-form" method="POST" action="/logout" class="hidden">
+                        @csrf
+                    </form>
+                </x-dropdown>
             @else
-                <a href="/register" class="text-xs font-bold uppercase">Register</a>
-                <a href="/login" class="ml-3 text-xs font-bold uppercase">Login</a>
+                <a href="/register" class="text-xs font-bold uppercase {{ request()->is('register') ? 'text-blue-500' : '' }}">Register</a>
+                <a href="/login" class="ml-6 text-xs font-bold uppercase {{ request()->is('login') ? 'text-blue-500' : '' }}">Log In</a>
             @endauth
+
             <a href="#newsletter" class="bg-blue-500 ml-3 rounded-full text-xs font-semibold text-white uppercase py-3 px-5">
                 Subscribe for Updates
             </a>
         </div>
     </nav>
 
-   {{ $slot }}
+    {{ $slot }}
 
     <footer id="newsletter" class="bg-gray-100 border border-black border-opacity-5 rounded-xl text-center py-16 px-10 mt-16">
         <img src="/images/lary-newsletter-icon.svg" alt="" class="mx-auto -mb-6" style="width: 145px;">
@@ -52,6 +71,7 @@
 
                 <form method="POST" action="/newsletter" class="lg:flex text-sm">
                     @csrf
+
                     <div class="lg:py-3 lg:px-5 flex items-center">
                         <label for="email" class="hidden lg:inline-block">
                             <img src="/images/mailbox-icon.svg" alt="mailbox letter">
@@ -62,13 +82,12 @@
                                    name="email"
                                    type="text"
                                    placeholder="Your email address"
-                                   class="lg:bg-transparent py-2 lg:py-0 pl-4 focus-within:outline-none"
-                            >
+                                   class="lg:bg-transparent py-2 lg:py-0 pl-4 focus-within:outline-none">
+
                             @error('email')
-                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                            <span class="text-xs text-red-500">{{ $message }}</span>
                             @enderror
                         </div>
-
                     </div>
 
                     <button type="submit"
@@ -81,5 +100,6 @@
         </div>
     </footer>
 </section>
+
 <x-flash />
 </body>
